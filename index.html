@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <title>Download Docs</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      .button-container {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        margin: 0 10px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .button:hover {
+        background-color: #0056b3;
+      }
+      .doc-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        transition: transform 0.5s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .doc-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin: 10px;
+        padding: 20px;
+        text-align: center;
+        width: 150px;
+        transition: box-shadow 0.3s;
+      }
+      .doc-item:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      .doc-item a {
+        text-decoration: none;
+        color: #333;
+      }
+      .hidden {
+        display: none;
+      }
+      .slide-in {
+        transform: translateX(0);
+      }
+      .slide-out {
+        transform: translateX(-100%);
+      }
+      /* Popup styles */
+      .popup {
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+      }
+      .popup.active {
+        display: block;
+      }
+      .popup-close {
+        cursor: pointer;
+        color: #ff4d4d;
+        float: right;
+        font-size: 20px;
+      }
+      .popup-close:hover {
+        color: #ff1a1a;
+      }
+      .credit {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .credit a {
+        text-decoration: none;
+        color: #007bff;
+      }
+      a {
+        text-decoration: none;
+        
+        padding: 20px 10% 20px 10px;
+        position: relative;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+    <script>
+      let currentPage = 'csharp'; // Default page set to C#
+
+      function changePage(page) {
+        const docList = document.getElementById('doc-list');
+        const title = document.getElementById('page-title');
+
+        // Set the new title
+        title.innerText = page === 'csharp' ? 'C# Page' : 'DBMS Page';
+
+        // Slide out the current content
+        docList.classList.add('slide-out');
+        setTimeout(() => {
+          // Change the content after the slide out animation
+          currentPage = page;
+          updateDocumentList();
+          docList.classList.remove('slide-out');
+          docList.classList.add('slide-in');
+
+          // Update the URL to reflect the current page and first document
+          window.history.replaceState({}, '', `${currentPage}/1.pdf`);
+        }, 500); // Match this timeout with the CSS transition duration
+      }
+
+      function updateDocumentList() {
+        const docList = document.getElementById('doc-list');
+        docList.innerHTML = ''; // Clear current list
+
+        const documents = currentPage === 'csharp' ? csharpDocs : dbmsDocs;
+
+        documents.forEach((doc, index) => {
+          const docItem = document.createElement('div');
+          docItem.className = 'doc-item';
+          docItem.innerHTML = `<a href="${currentPage}/${index + 1}.pdf" download onclick="showPopup()">USN ${index + 1}</a>`;
+          docList.appendChild(docItem);
+        });
+      }
+
+      function showPopup() {
+        const popup = document.getElementById('info-popup');
+        popup.classList.add('active');
+      }
+
+      function closePopup() {
+        const popup = document.getElementById('info-popup');
+        popup.classList.remove('active');
+      }
+
+      const dbmsDocs = Array.from({ length: 64 }, (_, i) => `DBMS Document ${i + 1}`);
+      const csharpDocs = Array.from({ length: 64 }, (_, i) => `C# Document ${i + 1}`);
+
+      // Initialize the document list on page load
+      window.onload = function() {
+        updateDocumentList();
+      };
+    </script>
+  </head>
+  <body>
+    <div class="button-container">
+      <button class="button" onclick="changePage('dbms')">DBMS</button>
+      <button class="button" onclick="changePage('csharp')">C#</button>
+    </div>
+    <h1 id="page-title">C# Page</h1>
+    <div class="doc-list slide-in" id="doc-list">
+      <!-- Document items will be dynamically inserted here -->
+    </div>
+
+    <!-- Info Popup -->
+    <div class="popup" id="info-popup">
+      <span class="popup-close" onclick="closePopup()">✖</span>
+      <p>Your download is starting. Thank you for visiting!</p>
+      <p>Credits: <a href="https://youtube.com/@coding_with_mayavi0" target="_blank"><i class="fab fa-youtube"></i> Click the link to check out the channel and don't forget to hit the subscribe</a></p>
+    </div>
+
+    <!-- Credit Section -->
+    <div class="credit">
+      <p>Credits: <a href="https://youtube.com/@coding_with_mayavi0" target="_blank"><i class="fab fa-youtube"></i> Coding with Mayavi0</a></p>
+    </div>
+  </body>
+</html>
